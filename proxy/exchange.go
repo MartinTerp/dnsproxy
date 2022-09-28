@@ -19,7 +19,7 @@ func (p *Proxy) exchange(req *dns.Msg, upstreams []upstream.Upstream) (reply *dn
 	}
 
 	if p.UpstreamMode == UModeParallel {
-		reply, u, err = upstream.ExchangeParallel(upstreams, req)
+		reply, u, err = upstream.ExchangeParallel(upstreams, req, p.OnlyOK)
 		return
 	}
 

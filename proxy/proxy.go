@@ -399,7 +399,7 @@ func (p *Proxy) replyFromUpstream(d *DNSContext) (ok bool, err error) {
 	if err != nil && p.Fallbacks != nil {
 		log.Tracef("using the fallback upstream due to %s", err)
 
-		reply, u, err = upstream.ExchangeParallel(p.Fallbacks, req)
+		reply, u, err = upstream.ExchangeParallel(p.Fallbacks, req, p.OnlyOK)
 	}
 
 	if ok = reply != nil; ok {

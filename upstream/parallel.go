@@ -25,7 +25,7 @@ const ErrNoUpstreams errors.Error = "no upstream specified"
 // ExchangeParallel function is called to parallel exchange dns request by many upstreams
 // First answer without error will be returned
 // We will return nil and error if count of errors equals count of upstreams
-func ExchangeParallel(u []Upstream, req *dns.Msg) (*dns.Msg, Upstream, error) {
+func ExchangeParallel(u []Upstream, req *dns.Msg, onlyOK bool) (*dns.Msg, Upstream, error) {
 	size := len(u)
 
 	if size == 0 {
@@ -48,8 +48,11 @@ func ExchangeParallel(u []Upstream, req *dns.Msg) (*dns.Msg, Upstream, error) {
 	errs := []error{}
 	for n := 0; n < len(u); n++ {
 		rep := <-ch
+		//log.Info(rep.reply.Rcode)
 		if rep.err != nil {
 			errs = append(errs, rep.err)
+		} else if onlyOK && rep.reply.Rcode > 0 {
+                        errs = append(errs, rep.err)
 		} else if rep.reply != nil {
 			return rep.reply, rep.upstream, nil
 		}

@@ -99,6 +99,8 @@ type Options struct {
 	// If true, parallel queries to all configured upstream servers
 	AllServers bool `yaml:"all-servers" long:"all-servers" description:"If specified, parallel queries to all configured upstream servers are enabled" optional:"yes" optional-value:"true"`
 
+        OnlyOK bool `yaml:"onlyok" long:"onlyok" description:"If specified, if using --all-servers, it only returns the request with rcode>0 (success)" optional:"yes" optional-value:"true"`
+
 	// Respond to A or AAAA requests only with the fastest IP address
 	//  detected by ICMP response time or TCP connection time
 	FastestAddress bool `yaml:"fastest-addr" long:"fastest-addr" description:"Respond to A or AAAA requests only with the fastest IP address" optional:"yes" optional-value:"true"`
@@ -318,6 +320,8 @@ func initUpstreams(config *proxy.Config, options *Options) {
 		log.Fatalf("error while parsing upstreams configuration: %s", err)
 	}
 	config.UpstreamConfig = upstreamConfig
+
+        config.OnlyOK = options.OnlyOK
 
 	if options.AllServers {
 		config.UpstreamMode = proxy.UModeParallel
